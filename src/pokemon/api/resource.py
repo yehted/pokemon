@@ -1,9 +1,20 @@
+import logging
+import requests
 from flask import Blueprint, jsonify, request
 
-from .model import get_pokemon_info, get_move
 from .battle import Battle
+from .moves import Moves
 
 bp = Blueprint('api', __name__)
+
+BASE_URL = "http://pokeapi.co/api/v2"
+
+def get_pokemon_info(pokemon_id):
+    logging.info("Retrieving info for pokemon: {}".format(pokemon_id))
+    r = requests.get(BASE_URL + '/pokemon/{}'.format(pokemon_id))
+    r.raise_for_status()
+
+    return r.json()
 
 @bp.route('/')
 def home():
@@ -17,7 +28,7 @@ def overview(pokemon_id):
 
 @bp.route('/move/<move_id>', methods=['GET'])
 def attack(move_id):
-    result = get_move(move_id)
+    result = Moves.get_from_move_url(BASE_URL + '/move/{}'.format(move_id))
 
     return jsonify(result)
 

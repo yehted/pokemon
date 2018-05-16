@@ -5,7 +5,7 @@ class Moves(object):
     url_dict = {}
 
     @classmethod
-    def _get_from_move_url(cls, url):
+    def get_from_move_url(cls, url):
         res = requests.get(url)
         res.raise_for_status()
         info = res.json()
@@ -19,7 +19,7 @@ class Moves(object):
                 cls.url_dict[url]['name']))
             return cls.url_dict[url]['power'] * percent
 
-        info = cls._get_from_move_url(url)
+        info = cls.get_from_move_url(url)
         move_power = info['power']
 
         if move_power is None:
