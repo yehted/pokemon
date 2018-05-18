@@ -36,12 +36,20 @@ class RandomBattle(Battle):
             player_1_move = self.pokemon_1.random_move()
             player_2_move = self.pokemon_2.random_move()
 
-            battle_round.fight(player_1_move, player_2_move, power_percent)
+            player_1_action = {
+                "move_name": player_1_move.name,
+                "move_dmg": player_1_move.power * power_percent,
+            }
+
+            player_2_action = {
+                "move_name": player_2_move.name,
+                "move_dmg": player_2_move.power * power_percent,
+            }
+
+            hp_1, hp_2 = battle_round.fight(player_1_action, player_2_action)
 
             rounds.append(battle_round.to_dict())
 
-            hp_1 = battle_round.player_1_hp
-            hp_2 = battle_round.player_2_hp
 
         if hp_2 <= 0:
             winner = "Player 1: {}".format(self.pokemon_1.name)
