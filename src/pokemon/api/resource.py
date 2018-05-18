@@ -2,20 +2,13 @@ import logging
 import requests
 from flask import Blueprint, jsonify, request
 
-from .battle import Battle
+from .battle import RandomBattle
 from .pokemon import Pokemon
 from .moves import Move
 
 bp = Blueprint('api', __name__)
 
 BASE_URL = "http://pokeapi.co/api/v2"
-
-def get_pokemon_info(pokemon_id):
-    logging.info("Retrieving info for pokemon: {}".format(pokemon_id))
-    r = requests.get(BASE_URL + '/pokemon/{}'.format(pokemon_id))
-    r.raise_for_status()
-
-    return r.json()
 
 @bp.route('/')
 def home():
@@ -53,11 +46,11 @@ def battle():
     pokemon_1 = Pokemon(url=BASE_URL + '/pokemon/{}'.format(contestant_1))
     pokemon_2 = Pokemon(url=BASE_URL + '/pokemon/{}'.format(contestant_2))
 
-    pokemon_battle = Battle(pokemon_1, pokemon_2)
-    pokemon_battle.battle_random_attacks(power_percent=0.1)
+    random_battle = RandomBattle(pokemon_1, pokemon_2)
+    rounds, winner = random_battle.go(power_percent=0.1)
     result = {
-        'battle_history': pokemon_battle.rounds,
-        'winner': pokemon_battle.winner
+        'battle_history': rounds,
+        'winner': winner
     }
 
     return jsonify(result)
