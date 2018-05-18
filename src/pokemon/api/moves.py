@@ -1,36 +1,43 @@
 import logging
 import requests
 
-class Moves(object):
-    url_dict = {}
+class Move(object):
+    def __init__(self, url, full_obj=None):
+        self.full_obj = full_obj or self.get_from_api(url)
 
-    @classmethod
-    def get_from_move_url(cls, url):
+        self._name = None
+        self._power = 0
+
+    @property
+    def name(self):
+        if self.full_obj is None:
+            self.full_obj = self.get_move_from_api()
+        self._name = self.full_obj['name']
+
+        return self._name
+
+    @property
+    def power(self):
+        if self.full_obj is None:
+            self.full_obj = self.get_move_from_api()
+        p = self.full_obj['power']
+
+        if p is None:
+            p = 0.0
+
+        self._power = p
+
+        return self._power
+
+    def get_from_api(self, url):
+        """ Retrieves move information from web API """
+        if url is None:
+            return { "name": None, "power": None }
+
+        logging.info("Retrieving move from api url: {}".format(url))
         res = requests.get(url)
         res.raise_for_status()
         info = res.json()
 
         return info
-
-    @classmethod
-    def get_move_power(cls, url, percent=0.1):
-        if url in cls.url_dict:
-            logging.info("Already seen this move: {}".format(
-                cls.url_dict[url]['name']))
-            return cls.url_dict[url]['power'] * percent
-
-        info = cls.get_from_move_url(url)
-        move_power = info['power']
-
-        if move_power is None:
-            logging.error("Move power is null for {}, setting to 0".format(
-                info['name']))
-            move_power = 0
-
-        cls.url_dict[url] = {
-            'name': info['name'],
-            'power': move_power
-        }
-
-        return move_power * percent
 
