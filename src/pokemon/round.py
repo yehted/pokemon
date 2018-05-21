@@ -36,14 +36,10 @@ class Round(object):
         logging.info('move 1: {}'.format(player_1_action['move_name']))
         logging.info('move 2: {}'.format(player_2_action['move_name']))
 
-        # If/elif/else prevents a player who has been knocked out from
+        # If/else prevents player2 who has been knocked out from
         # performing his action
         if self.player_2['hp'] - player_1_action['move_dmg'] < 0:
             self.player_2['hp'] -= player_1_action['move_dmg']
-
-        elif self.player_1['hp'] - player_2_action['move_dmg'] < 0:
-            self.player_1['hp'] -= player_2_action['move_dmg']
-
         else:
             self.player_2['hp'] -= player_1_action['move_dmg']
             self.player_1['hp'] -= player_2_action['move_dmg']

@@ -11,3 +11,7 @@ flask run --host=0.0.0.0
 ```
 
 Navigate to http://localhost:5000/api/
+
+# Running tests
+pip install nose mock
+nosetests
